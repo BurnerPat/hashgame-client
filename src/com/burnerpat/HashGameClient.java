@@ -9,23 +9,21 @@ import java.util.List;
 public class HashGameClient {
 	
 	private static final String SERVER_URL = "http://hash.h10a.de/";
-	private static String USERNAME = "BurnerPat";
-	private static int THREAD_COUNT = 10;
+	private static String USERNAME = "wwi11b2_ampjbw";
+	private static int THREAD_COUNT = 2;
 	private static String HASH = "";
 	
 	private static HashGameWorker[] threads = null;
 	private static boolean temp = false;
 	
 	public static void main(String[] args) {		
-		if (args.length != 2) {
-			System.out.println("Please provide the username and number of threads");
+		if (args.length != 1) {
+			System.out.println("Please provide the number of threads");
 			return;
 		}
 		
-		USERNAME = args[0];
-		
 		try {
-			THREAD_COUNT = Integer.parseInt(args[1]);
+			THREAD_COUNT = Integer.parseInt(args[0]);
 		}
 		catch (NumberFormatException ex) {
 			System.out.println("Please provide a valid nunber of threads");
@@ -132,6 +130,8 @@ public class HashGameClient {
 				
 			}
 			
+			UPDATER.interrupt();
+			
 			try {
 				InputStream in = new URL(SERVER_URL + "?Z=" + parent + "&P=" + USERNAME + "&R=" + seed).openStream();
 				while (in.read() >= 0) {
@@ -144,7 +144,7 @@ public class HashGameClient {
 				ex.printStackTrace(System.err);
 			}
 			
-			start();
+//			start();
 		}
 	};
 	
@@ -175,7 +175,9 @@ public class HashGameClient {
 					
 					sleep(1000);
 					
-					startWorkers(HASH);
+					UPDATER.interrupt();
+					
+//					startWorkers(HASH);
 				}
 			}
 			catch (InterruptedException ex) {
