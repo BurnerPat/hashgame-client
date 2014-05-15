@@ -14,7 +14,6 @@ public class HashGameClient {
 	private static String HASH = "";
 	
 	private static HashGameWorker[] threads = null;
-	private static boolean temp = false;
 	
 	public static void main(String[] args) {		
 		if (args.length != 1) {
@@ -111,15 +110,16 @@ public class HashGameClient {
 
 	private static final HashGameWorker.Listener listener = new HashGameWorker.Listener() {
 		@Override
-		public void notifySuccess(String hash, String seed, String parent) {
-			if (temp == true) {
+		public synchronized void notifySuccess(String hash, String seed, String parent) {
+			if (Thread.currentThread().isInterrupted()) {
+				System.out.println("Worker found hash but another worker was faster, ignoring.");
 				return;
 			}
 			
 			System.out.println("Found hash: " + hash);
 			System.out.println("Seed: " + seed);
 			System.out.println("Stopping workers...");
-			temp = true;
+
 			for (HashGameWorker thread : threads) {
 				thread.interrupt();
 			}
@@ -141,8 +141,7 @@ public class HashGameClient {
 				System.err.println("Failed to post new hash");
 				ex.printStackTrace(System.err);
 			}
-			
-			temp = false;
+
 			start();
 		}
 	};
