@@ -16,6 +16,8 @@ public class HashGameWorker extends Thread {
 		this.parent = parent;
 		this.user = user;
 		this.listener = listener;
+		
+		setName("Worker-" + parent);
 	}
 	
 	@Override
@@ -40,14 +42,16 @@ public class HashGameWorker extends Thread {
 			}
 			
 			try {
-				calculate(digest);
+				if (calculate(digest)) {
+					return;
+				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	public void calculate(MessageDigest digest) throws UnsupportedEncodingException{
+	public boolean calculate(MessageDigest digest) throws UnsupportedEncodingException{
 		final String seed = Long.toHexString(random.nextLong());
 		
 		final String line = parent + " " + user + " " + seed;
@@ -59,6 +63,10 @@ public class HashGameWorker extends Thread {
 			(hash[3] & 0xF0) == 0) {
 			
 			listener.notifySuccess(javax.xml.bind.DatatypeConverter.printHexBinary(hash).toLowerCase(), seed, parent);
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 	

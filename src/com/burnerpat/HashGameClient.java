@@ -148,6 +148,8 @@ public class HashGameClient {
 	
 	private static Thread UPDATER = new Thread(){
 		public void run() {
+			setName("Updater");
+			
 			try {
 				while (true) {
 					sleep(10000);
