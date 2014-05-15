@@ -28,7 +28,7 @@ public class HashGameClient {
 			THREAD_COUNT = Integer.parseInt(args[1]);
 		}
 		catch (NumberFormatException ex) {
-			System.out.println("Pleas provide a valid nunber");
+			System.out.println("Please provide a valid nunber of threads");
 			return;
 		}
 		
