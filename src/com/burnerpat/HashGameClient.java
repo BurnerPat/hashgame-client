@@ -130,8 +130,6 @@ public class HashGameClient {
 				
 			}
 			
-			UPDATER.interrupt();
-			
 			try {
 				InputStream in = new URL(SERVER_URL + "?Z=" + parent + "&P=" + USERNAME + "&R=" + seed).openStream();
 				while (in.read() >= 0) {
@@ -144,7 +142,8 @@ public class HashGameClient {
 				ex.printStackTrace(System.err);
 			}
 			
-//			start();
+			temp = false;
+			start();
 		}
 	};
 	
@@ -175,9 +174,7 @@ public class HashGameClient {
 					
 					sleep(1000);
 					
-					UPDATER.interrupt();
-					
-//					startWorkers(HASH);
+					startWorkers(HASH);
 				}
 			}
 			catch (InterruptedException ex) {
