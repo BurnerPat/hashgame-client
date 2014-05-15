@@ -152,7 +152,7 @@ public class HashGameClient {
 			
 			try {
 				while (true) {
-					sleep(10000);
+					sleep(3000);
 					
 					String hash = retrieveHash();
 					
