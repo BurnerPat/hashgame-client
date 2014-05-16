@@ -15,21 +15,44 @@ public class HashGameClient {
 	
 	private static HashGameWorker[] threads = null;
 	
-	public static void main(String[] args) {		
-		if (args.length != 1) {
-			System.out.println("Please provide the number of threads");
-			return;
+	public static void main(String[] args) {			
+		try {
+			for (int i = 0; i < args.length; i += 2) {
+				switch (args[i]) {
+					case "-u": {
+						USERNAME = args[i + 1];
+						break;
+					}
+					case "-t": {
+						try {
+							THREAD_COUNT = Integer.parseInt(args[i + 1]);
+						}
+						catch (NumberFormatException ex) {
+							System.out.println("Please provide a valid nunber of threads");
+							return;
+						}
+						break;
+					}
+					default: {
+						usage();
+					}
+				}
+			}
+		}
+		catch (ArrayIndexOutOfBoundsException ex) {
+			usage();
 		}
 		
-		try {
-			THREAD_COUNT = Integer.parseInt(args[0]);
-		}
-		catch (NumberFormatException ex) {
-			System.out.println("Please provide a valid nunber of threads");
-			return;
-		}
+		System.out.println("Username: " + USERNAME);
 		
 		start();
+	}
+	
+	private static void usage() {
+		System.out.println("Usage: java -jar HashGameClient.jar [-t thread_count] [-u username]\n"
+						 + "\t-t thread_count: Number of worker threads to use\n"
+						 + "\t-u username: The username to use when commiting\n");
+		System.exit(1);
 	}
 	
 	private static String retrieveHash() {
