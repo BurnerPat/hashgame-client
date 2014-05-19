@@ -94,7 +94,7 @@ public class HashGameClient {
 			return null;
 		}
 		
-		int max = 0;
+		int max = -1;
 		String hash = "";
 		for (int i = 0; i < hashes.size(); i++) {
 			if (chains.get(i) > max) {
