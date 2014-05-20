@@ -17,6 +17,9 @@ public class HashGameClient {
 	private static String HASH = "";
 	
 	private static HashGameWorker[] threads = null;
+	private static final byte HEX_BYTES[] = new byte[] {
+		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+	};
 	
 	public static void main(String[] args) {			
 		try {
@@ -241,38 +244,55 @@ public class HashGameClient {
 			
 			random = new Random(System.currentTimeMillis() + random.nextLong());
 			
+			int len = parent.length() + user.length() + 10;
+			
+			byte[] pBytes = null;
+			byte[] uBytes = null;
+			try {
+				pBytes = parent.getBytes("UTF-8");
+				uBytes = USERNAME.getBytes("UTF-8");
+			}
+			catch (UnsupportedEncodingException ex) {
+				return;
+			}
+			
+			byte[] data = new byte[len];
+			System.arraycopy(pBytes, 0, data, 0, pBytes.length);
+			int off = pBytes.length;
+			
+			data[off] = ' ';
+			off++;
+			
+			System.arraycopy(uBytes, 0, data, off, uBytes.length);
+			off += uBytes.length;
+			
+			data[off] = ' ';
+			off++;
+			byte[] seed = new byte[8];
+			
 			while (!isInterrupted()) {
 				if (lastUpdate < System.currentTimeMillis()) {
 					lastUpdate = System.currentTimeMillis() + 50;
 					random.setSeed(lastUpdate + random.nextLong());
 				}
 				
-				try {
-					if (calculate(digest)) {
-						return;
-					}
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
+				long r = random.nextLong();
+				for (int i = 0; i < 8; i++) {
+					int t = (int)(r >> (i * 8)) % 16;
+					seed[i] = HEX_BYTES[t >= 0 ? t : 16 + t];
+					data[off + i] = seed[i];
 				}
-			}
-		}
-		
-		public boolean calculate(MessageDigest digest) throws UnsupportedEncodingException{
-			final String seed = Long.toHexString(random.nextLong());
-			
-			final String line = parent + " " + user + " " + seed;
-			final byte[] hash = digest.digest(line.getBytes("UTF-8"));
-			
-			if (hash[0] == 0 &&
-				hash[1] == 0 &&
-				hash[2] == 0 &&
-				(hash[3] & 0xF0) == 0) {
 				
-				listener.notifySuccess(javax.xml.bind.DatatypeConverter.printHexBinary(hash).toLowerCase(), seed, parent);
-				return true;
-			}
-			else {
-				return false;
+				final byte[] hash = digest.digest(data);
+				
+				if (hash[0] == 0 &&
+					hash[1] == 0 &&
+					hash[2] == 0 &&
+					(hash[3] & 0xF0) == 0) {
+					
+					listener.notifySuccess(javax.xml.bind.DatatypeConverter.printHexBinary(hash).toLowerCase(), new String(seed).toLowerCase(), parent);
+					return;
+				}
 			}
 		}
 		
