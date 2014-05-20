@@ -247,7 +247,7 @@ public class HashGameClient {
 			
 			random = new Random(System.currentTimeMillis() + random.nextLong());
 			
-			int len = parent.length() + user.length() + 10;
+			int len = parent.length() + user.length() + 18;
 			
 			byte[] pBytes = null;
 			byte[] uBytes = null;
@@ -271,7 +271,7 @@ public class HashGameClient {
 			
 			data[off] = ' ';
 			off++;
-			byte[] seed = new byte[8];
+			byte[] seed = new byte[16];
 			
 			while (!isInterrupted()) {
 				if (lastUpdate < System.currentTimeMillis()) {
@@ -280,7 +280,7 @@ public class HashGameClient {
 				}
 				
 				long r = random.nextLong();
-				for (int i = 0; i < 8; i++) {
+				for (int i = 0; i < 16; i++) {
 					int t = (int)(r >> (i * 8)) % 16;
 					seed[i] = HEX_BYTES[t >= 0 ? t : 16 + t];
 					data[off + i] = seed[i];
