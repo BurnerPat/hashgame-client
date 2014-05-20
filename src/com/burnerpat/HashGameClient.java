@@ -6,6 +6,7 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -145,6 +146,7 @@ public class HashGameClient {
 				return;
 			}
 			
+			System.out.println("Timestamp: " + new Date().toString());
 			System.out.println("Found hash: " + hash);
 			System.out.println("Seed: " + seed);
 			System.out.println("Stopping workers...");
@@ -195,6 +197,7 @@ public class HashGameClient {
 						continue;
 					}
 					
+					System.out.println("Timestamp: " + new Date().toString());
 					System.out.println("Found update, stopping workers");
 					HASH = hash;
 					
