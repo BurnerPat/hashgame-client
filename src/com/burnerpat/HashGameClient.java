@@ -222,7 +222,7 @@ public class HashGameClient {
 		private final Listener listener;
 		
 		private static Random random = new Random();
-		private static long lastUpdate = 0;
+		private static long randomUpdate = 100000;
 
 		public HashGameWorker(String parent, String user, Listener listener) {
 			this.parent = parent;
@@ -274,10 +274,11 @@ public class HashGameClient {
 			byte[] seed = new byte[16];
 			
 			while (!isInterrupted()) {
-				if (lastUpdate < System.currentTimeMillis()) {
-					lastUpdate = System.currentTimeMillis() + 50;
-					random.setSeed(lastUpdate + random.nextLong());
+				if (randomUpdate <= 0) {
+					randomUpdate = 100000;
+					random.setSeed(System.currentTimeMillis() + random.nextLong());
 				}
+				randomUpdate--;
 				
 				long r = random.nextLong();
 				for (int i = 0; i < 16; i++) {
@@ -291,7 +292,8 @@ public class HashGameClient {
 				if (hash[0] == 0 &&
 					hash[1] == 0 &&
 					hash[2] == 0 &&
-					(hash[3] & 0xF0) == 0) {
+					hash[3] == 0 &&
+					(hash[4] & 0xF0) == 0) {
 					
 					listener.notifySuccess(javax.xml.bind.DatatypeConverter.printHexBinary(hash).toLowerCase(), new String(seed).toLowerCase(), parent);
 					return;
