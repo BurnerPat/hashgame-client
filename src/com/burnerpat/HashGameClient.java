@@ -222,7 +222,7 @@ public class HashGameClient {
 		private final Listener listener;
 		
 		private static Random random = new Random();
-		private static long randomUpdate = 100000;
+		private static long randomUpdate = 1024;
 
 		public HashGameWorker(String parent, String user, Listener listener) {
 			this.parent = parent;
@@ -253,7 +253,7 @@ public class HashGameClient {
 			byte[] uBytes = null;
 			try {
 				pBytes = parent.getBytes("UTF-8");
-				uBytes = USERNAME.getBytes("UTF-8");
+				uBytes = user.getBytes("UTF-8");
 			}
 			catch (UnsupportedEncodingException ex) {
 				return;
@@ -275,7 +275,7 @@ public class HashGameClient {
 			
 			while (!isInterrupted()) {
 				if (randomUpdate <= 0) {
-					randomUpdate = 100000;
+					randomUpdate = 1024;
 					random.setSeed(System.currentTimeMillis() + random.nextLong());
 				}
 				randomUpdate--;
